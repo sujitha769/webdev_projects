@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>weather App</title>
+  <link rel="stylesheet" href="./Weather.css">
+  
+
+</head>
+<body>
+  <div class="contentcontainer">
+    <div class="searchbar">
+
+      <input class='input' type="text"  placeholder="🔍Enter City Name" >
+      <button class="button" onclick="fetchdata()">Go</button>
+    </div>
+    <div class="grid">
+  
+      <div class="b1 b">
+        <h4>Pressure</h4>
+      <p style="padding-left:1px;" id="pressure">xxxx</p>
+    </div>
+
+      <div class="b2 b samayam">
+        <div class="dateup">  
+          <img src="./calendar.png" width="20px" class="date">
+          <p><h4>Date:</h4><span id="d">xxxx</span></p>
+         </div>
+
+           <div class="datedown">  
+          <img src="./clock.png" width="20px" class="date">
+          <p><h4>Time:</h4><span id="t">xxxx</span></p>
+         </div>
+      
+      </div>
+      <div class="b3 b">
+              <h4>Feels_like</h4>
+      <p style="padding-left:1px;" id="feelslike">xxxx</p>
+      </div>
+      <div class="b4 b">
+              <h4>Humidity</h4>
+      <p style="padding-left:1px;" id="humidity">xxxx</p>
+      </div>
+      <div class="b5 b">
+              <h4>Visibility</h4>
+      <p style="padding-left:1px;" id="visibility">xxxx</p>
+      </div>
+      <div class="b6 b">
+        <img src="./cloud.png" alt="nf" width="60px" height="60px">
+        <h3 id="city"></h3>
+        <h1 style="color: black;"><span id="temp"> 0</span>&deg;C</h1>
+        <h3 id="des"></h5>
+        
+      </div>
+      <div class="b7 b">
+              <h4>Windspeed</h4>
+      <p style="padding-left:1px;" id="windspeed">xxxx</p>
+      </div>
+      <div class="b8 b">
+              <h4>temp_kf</h4>
+      <p style="padding-left:1px;" id="tempk">xxxx</p>
+      </div>
+      <div class="b9">
+         <h3><img src="./sun.png" width="30px"><span>Sunrise</span></h3>
+         <p class="sun" id="sun">xxxxxx</p>
+      </div>
+      <div class="b10 ">
+                 <h3><img src="./full-moon.png" width="30px"><span>Sunset</span></h3>
+                          <p class="sun" id="moon">xxxxxx</p>
+      </div>
+    
+
+  
+
+  
+      
+    </div>
+    <div class="rectangle b">
+      <div class="top">
+        <h2 class="rec">Air Quality Index(AQI)</h2>
+      </div>
+      <div class="bottom">
+        <div class="co">
+          <h3 class="c">co</h3>
+          <P id="co"  class="cd">XXX</P>
+        </div>
+        <div class="no">
+            <h3 class="c">no</h3>
+          <P id="no" class="cd">XXX</P>
+        </div>
+        <div class="no2">  <h3 class="c">no2</h3>
+          <P id="no2"  class="cd">XXX</P>
+        </div>
+        <div class="o3">  <h3 class="c">o3</h3>
+          <P id="o3"  class="cd">XXX</P>
+        </div>
+        <div class="so2">  <h3 class="c">so2</h3>
+          <P id="so2"  class="cd">XXX</P></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+
+
+  function dateFormat(timestamp) {
+            const date = new Date(timestamp * 1000); // Multiply by 1000 to convert from seconds to milliseconds
+            return date.toLocaleString();// Convert to local time format and return it
+        }
+
+
+      
+
+    async function fetchdata(){
+      //updating city temperature and description
+          let cityname=document.getElementsByClassName('input')[0].value;
+
+
+  let requesteddata=await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${cityname}&appid=067ecc4da9a0d1d2a6dae521713e2688&units=metric`)
+  let formatteddata=await requesteddata.json();
+ 
+  let city=formatteddata.name
+  let temperature=document.getElementById('city')
+  temperature.innerText=city
+
+  
+    let responsetemp=formatteddata.main.temp
+    let temp=document.getElementById('temp')
+    temp.innerText=responsetemp
+
+
+    
+    let responsedes=formatteddata.weather[0].description
+    let des=document.getElementById('des')
+    des.innerText=responsedes
+
+    //updating sunrise and sunset
+       let sunrise=formatteddata.sys.sunrise;
+     let sunset=formatteddata.sys.sunset;
+     let propersuntime=dateFormat(sunrise).split(',')[1]
+          let propersettime=dateFormat(sunset).split(',')[1]
+      
+
+       let k=   document.getElementById('sun')
+k.innerText=propersuntime
+
+let l=document.getElementById('moon')
+l.innerText=propersettime
+
+//updating time and date
+let date=formatteddata.dt;
+let time=formatteddata.dt;
+let properdate=dateFormat(date).split(',')[0]
+let propertime=dateFormat(time).split(',')[1]
+
+
+
+let d=document.getElementById('d')
+d.innerText=properdate
+
+let t=document.getElementById('t')
+t.innerText=propertime
+
+
+
+async function metric(lat,lon){
+  let requestedmetric=await fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=067ecc4da9a0d1d2a6dae521713e2688&units=metric`)
+   let readabledata=await requestedmetric.json() 
+      
+         let feelslike=readabledata.list[0].main.feels_like
+
+         let fl=document.getElementById('feelslike')
+         fl.innerText=feelslike
+           
+         let pressure=readabledata.list[0].main.pressure
+          let p=document.getElementById('pressure')
+           p.innerText=pressure
+
+           let humidity=readabledata.list[0].main.humidity
+          let h=document.getElementById('humidity')
+           h.innerText=humidity
+
+           let vb=readabledata.list[0].visibility
+          let v=document.getElementById('visibility')
+           v.innerText=vb
+           
+
+           let ws=readabledata.list[0].wind.speed
+          let w=document.getElementById('windspeed')
+           w.innerText=ws
+
+
+           let tkf=readabledata.list[0].main.temp_kf
+           let kf=document.getElementById('tempk')
+           kf.innerText=tkf
+
+           
+        
+
+
+
+           //updating aqi index
+           
+  
+
+}
+      async function aqi(lat,lon){
+ let requestedaqi=await fetch(`https://api.openweathermap.org/data/2.5/air_pollution?lat=${lat}&lon=${lon}&appid=067ecc4da9a0d1d2a6dae521713e2688`)
+  let formattedDataaqi=await requestedaqi.json();
+  let list=formattedDataaqi.list[0].components;
+  let a=document.getElementById('co');
+  a.innerText=list.co
+   let b=document.getElementById('no');
+  b.innerText=list.no
+   let c=document.getElementById('no2');
+  c.innerText=list.no2
+   let e=document.getElementById('o3');
+  e.innerText=list.o3
+    let f=document.getElementById('so2');
+  f.innerText=list.o3
+
+
+        }
+
+let lat = formatteddata.coord.lat;
+let lon = formatteddata.coord.lon;
+metric(lat,lon);
+aqi(lat,lon);
+    }
+
+    
+  </script>
+</body>
+</html>
